@@ -53,6 +53,7 @@ def suspend_task(request):
     '''
     return task status
     '''	
+    task_id=request.POST['uuid']
     task_id=request.POST['task_id']
     result=PocTask.objects.get(task_id=task_id)
     pid=result.local_task_id
