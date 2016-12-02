@@ -13,8 +13,14 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+from . import root
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+
+PROJECT_ROOT = root()
+# Name of the project.
+PROJECT_NAME = 'pocscan'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -37,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djcelery',
     'pocscan.work',
 )
 
@@ -83,6 +90,15 @@ DATABASES = {
 }
 
 
+# djcelery + broker
+
+import djcelery
+djcelery.setup_loader()
+
+# BROKER_URL = 'redis://127.0.0.1:6379/0'
+BROKER_URL = "amqp://amos:amos@192.168.64.44:5672/amos_vhost"
+CELERY_RESULT_BACKEND = "amqp"
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -101,3 +117,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = root('media')

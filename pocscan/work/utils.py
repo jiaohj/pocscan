@@ -37,3 +37,17 @@ def jsonify(func=None, jsonp=None, content_type='application/json'):
         return decorator
     else:
         return decorator(func)
+
+
+def get_pid(process):
+    import commands
+    print process
+    cmd = "ps aux | grep '%s' |awk '{print $2}'" % process
+    info = commands.getoutput(cmd)
+    infos = info.split()
+    infos.sort()
+    print infos
+    if len(infos) > 1:
+        return infos[:2]
+    else:
+        return -1
