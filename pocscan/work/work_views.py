@@ -24,9 +24,13 @@ def upload_plug(request, *args, **kwargs):
         poc_uuid = uuid.uuid4().hex
         filename = request.FILES.get('pocfile')
         file_path = "%s/%s.py" % (settings.MEDIA_ROOT, poc_uuid)
-        fp = open(file_path, 'w')
-        fp.write(filename.read())
-        fp.close()
+        try:
+            fp = open(file_path, 'w')
+            fp.write(filename.read())
+            fp.close()
+        except Exception as e:
+            print e, filename.read()
+            return dict(status=-1, msg=u"上传文件失败")
         PlugRecord.objects.create(uuid=poc_uuid, plug=file_path)
         return dict(status=0, pocId=poc_uuid)
     return dict(status=-1, msg=u"请求方式错误")
@@ -119,4 +123,24 @@ def stop_task(request, *args, **kwargs):
             task.status = 10
             task.save()
             return dict(status=0)
+    return dict(status=-1, msg=u"请求方式错误")
+
+
+@csrf_exempt
+@jsonify
+def query_status(request, *args, **kwargs):
+    if request.method == 'GET':
+        body = json.loads(request.body)
+        task_ids = body.get('taskIds')
+        result = {}
+        if isinstance(task_ids, list):
+            for task_id in task_ids:
+                if not PocTask.objects.filter(task_id=task_id).exists():
+                    result[task_id] = ''
+                    continue
+                task = PocTask.objects.filter(task_id=task_id).first()
+                result['task_id'] = task.status
+        else:
+            return dict(status=-1, msg=u"参数错误！")
+        return dict(status=0, data=result)
     return dict(status=-1, msg=u"请求方式错误")

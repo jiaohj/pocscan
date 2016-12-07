@@ -12,4 +12,5 @@ urlpatterns += patterns(
     url(r'^add$', 'make_task', name='make_task'),
     url(r'^query$', 'query_task', name='query_task'),
     url(r'^stopTask$', 'stop_task', name='stop_task'),
+    url(r'^queryTasks$', 'query_status', name='query_status'),
 )
